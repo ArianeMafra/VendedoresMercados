@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -6,43 +7,26 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
     static final Random random = new Random();
 
-    private static final String [] nomes = new String[] {"André", "João", "Valentina", "Sophia", "Miguel", "Ian", "Vinicius", "Lais", "Carlos", "Maria"};
+    private static final String [] nomesVendedores = new String[] {"André", "João", "Valentina", "Sophia", "Miguel", "Ian", "Vinicius", "Lais", "Carlos", "Maria"};
 
+    private static final String [] nomesCompradores = new String[] {"Alisson", "José", "Vitória", "Sandra", "Mateus", "Igor", "Vicente", "Laura", "Caio", "Mariana"};
     public static void main(String[] args) {
 
-        Vendedor[] vendedoresFlores = new Vendedor[nomes.length];
-        for (int i = 0; i < nomes.length; i++) {
-            int indNomes = random.nextInt(nomes.length);
-            String nome = nomes[indNomes];
-
-            vendedoresFlores[i] = new Vendedor(nome);
-        }
-
-        Vendedor[] vendedoresFrutas = new Vendedor[nomes.length];
-        for (int i = 0; i < nomes.length; i++) {
-            int indNomes = random.nextInt(nomes.length);
-            String nome = nomes[indNomes];
-
-            vendedoresFrutas[i] = new Vendedor(nome);
-        }
-
-        Vendedor[] vendedoresRoupas = new Vendedor[nomes.length];
-        for (int i = 0; i < nomes.length; i++) {
-            int indNomes = random.nextInt(nomes.length);
-            String nome = nomes[indNomes];
-
-            vendedoresRoupas[i] = new Vendedor(nome);
-        }
+        Vendedor[] vendedoresFlores = criarVendedores();
+        Vendedor[] vendedoresFrutas = criarVendedores();
+        Vendedor[] vendedoresRoupas = criarVendedores();
 
         Mercado mercadoFlores = new Mercado("Mercado das Flores", vendedoresFlores, "Praça XV", 300);
         Mercado mercadoFrutas = new Mercado("Mercado das Frutas", vendedoresFrutas, "Praça JK", 500);
         Mercado mercadoRoupas = new Mercado("Mercado das Roupas", vendedoresRoupas, "Praça da Cidade", 700);
 
-        Comprador comprador = new Comprador();
-        for (int i = 0; i < nomes.length; i++) {
-            comprador.comprar(mercadoFlores.vendedores[i]);
-            comprador.comprar(mercadoFrutas.vendedores[i]);
-            comprador.comprar(mercadoRoupas.vendedores[i]);
+        Comprador[] comprador = criarCompradores();
+
+        for  (int i = 0; i < nomesVendedores.length; i++) {
+            comprador[i].comprar(mercadoFlores.vendedores[i]);
+            comprador[i].comprar(mercadoFrutas.vendedores[i]);
+            comprador[i].comprar(mercadoRoupas.vendedores[i]);
+
         }
 
         Regulador regulador = new Regulador();
@@ -57,7 +41,122 @@ public class Main {
         anunciarBonificacao(mercadoFrutas);
         System.out.println("---------------------------------------------------------------");
         anunciarBonificacao(mercadoRoupas);
+        System.out.println("---------------------------------------------------------------");
+        System.out.println("---------------------------Ranking-----------------------------");
+        maisLucrativo(mercadoFlores, mercadoFrutas, mercadoRoupas);
+        rankingVendedores(mercadoFlores, mercadoFrutas, mercadoRoupas);
+        rankingCompradores(comprador);
 
+    }
+
+    private static void rankingCompradores(Comprador[] comprador) {
+        double [] valoresCompra = new double[comprador.length];
+        for (int i = 0; i < comprador.length; i++) {
+            valoresCompra[i] = comprador[i].getTotalCompras();
+        }
+        Arrays.sort(valoresCompra);
+        System.out.println("\nOs três maiores compradores foram: ");
+        for (int i = 0; i < comprador.length; i++) {
+            if (valoresCompra[comprador.length -1] == comprador[i].getTotalCompras()) {
+                System.out.println("1º - " + comprador[i].getNome());
+            }
+        }
+        for (int i = 0; i < comprador.length; i++) {
+            if (valoresCompra[comprador.length -2] == comprador[i].getTotalCompras()) {
+                System.out.println("2º - " + comprador[i].getNome());
+            }
+        }
+        for (int i = 0; i < comprador.length; i++) {
+            if (valoresCompra[comprador.length -3] == comprador[i].getTotalCompras()) {
+                System.out.println("3º - " + comprador[i].getNome());
+            }
+        }
+    }
+
+    public static void rankingVendedores(Mercado mercado1,Mercado mercado2,Mercado mercado3){
+        Vendedor []maior= new Vendedor[3];
+        maior[0]=mercado1.vendedores[0];
+        maior[0].pagamento(0);
+        maior[1]=maior[0];
+        maior[2]=maior[0];
+        String[] maiorMerc= new String[3];
+        System.out.println("\nOs três maiores vendedores foram: ");
+        for (int i=0;i<3;i++){
+            for (int j = 0; j < 10; j++) {
+                if(i==0) {
+                    if (mercado1.vendedores[j].getValorVendas() > maior[i].getValorVendas()) {
+                        maior[i] = mercado1.vendedores[j];
+                        maiorMerc[i] = mercado1.getNome();
+                    }
+                    if (mercado2.vendedores[j].getValorVendas() > maior[i].getValorVendas()) {
+                        maior[i] = mercado2.vendedores[j];
+                        maiorMerc[i] = mercado2.getNome();
+                    }
+                    if (mercado3.vendedores[j].getValorVendas() > maior[i].getValorVendas()) {
+                        maior[i] = mercado3.vendedores[j];
+                        maiorMerc[i] = mercado3.getNome();
+                    }
+                }
+                else{
+                    if (mercado1.vendedores[j].getValorVendas()>maior[i].getValorVendas() &&
+                            mercado1.vendedores[j].getValorVendas()<maior[i-1].getValorVendas()){
+                        maior[i]=mercado1.vendedores[j];
+                        maiorMerc[i]=mercado1.getNome();
+                    }
+                    if (mercado2.vendedores[j].getValorVendas()>maior[i].getValorVendas() &&
+                            mercado2.vendedores[j].getValorVendas()<maior[i-1].getValorVendas()){
+                        maior[i]=mercado2.vendedores[j];
+                        maiorMerc[i]=mercado2.getNome();
+                    }
+                    if (mercado3.vendedores[j].getValorVendas()>maior[i].getValorVendas() &&
+                            mercado3.vendedores[j].getValorVendas()<maior[i-1].getValorVendas()){
+                        maior[i]=mercado3.vendedores[j];
+                        maiorMerc[i]=mercado3.getNome();
+                    }
+                }
+            }
+        }
+        for (int i=0;i<3;i++){
+            System.out.println((i+1)+"º - "+
+                    maior[i].getNome()+
+                    ", com R$ "+maior[i].getValorVendas()+
+                    " vendidos no "+ maiorMerc[i]);
+        }
+    }
+    private static void maisLucrativo(Mercado mercado1, Mercado mercado2, Mercado mercado3) {
+        double lucroM1 = mercado1.getTotalVendas();
+        double lucroM2 = mercado2.getTotalVendas();
+        double lucroM3 = mercado3.getTotalVendas();
+
+        if (lucroM1 > lucroM2 && lucroM1 > lucroM3) {
+            System.out.printf("O %s foi o mercado mais lucratico.\n\n", mercado1.getNome());
+        } else if (lucroM2 > lucroM1 && lucroM2 > lucroM3) {
+            System.out.printf("O %s foi o mercado mais lucratico.\n\n", mercado2.getNome());
+        } else {
+            System.out.printf("O %s foi o mercado mais lucratico.\n\n", mercado3.getNome());
+        }
+    }
+
+    private static Comprador[] criarCompradores() {
+        Comprador[] compradores = new Comprador[nomesCompradores.length];
+        for (int i = 0; i < nomesCompradores.length; i++) {
+            int indNomes = random.nextInt(nomesCompradores.length);
+            String nome = nomesCompradores[indNomes];
+
+            compradores[i] = new Comprador(nome);
+        }
+        return compradores;
+    }
+
+    private static Vendedor[] criarVendedores() {
+        Vendedor[] vendedores = new Vendedor[nomesVendedores.length];
+        for (int i = 0; i < nomesVendedores.length; i++) {
+            int indNomes = random.nextInt(nomesVendedores.length);
+            String nome = nomesVendedores[indNomes];
+
+            vendedores[i] = new Vendedor(nome);
+        }
+        return vendedores;
     }
 
     private static void anunciarBonificacao(Mercado mercado) {
@@ -69,8 +168,6 @@ public class Main {
             }
         }
     }
-
-
 }
 
 class Regulador {
@@ -99,12 +196,6 @@ class Mercado {
         this.meta = meta;
     }
 
-    public void calcularTotalVendas(Vendedor[] vendedores) {
-        for (int i = 0; i < vendedores.length; i++) {
-            totalVendas += vendedores[i].getValorVendas();
-        }
-    }
-
     public String getNome() {
 
         return nome;
@@ -121,6 +212,9 @@ class Mercado {
     }
 
     public double getTotalVendas() {
+        for (int i = 0; i < vendedores.length; i++) {
+            totalVendas += vendedores[i].getValorVendas();
+        }
 
         return totalVendas;
     }
@@ -162,8 +256,27 @@ class Vendedor {
 }
 
 class Comprador {
+
+    private String nome;
+    private double compra;
+    private double totalCompras;
+
+    public Comprador(String nome) {
+        this.nome = nome;
+    }
+
     public void comprar(Vendedor valor) {
-        valor.pagamento(Main.random.nextInt(100,1000));
+        compra = Main.random.nextInt(100,1000);
+        valor.pagamento(compra);
+        totalCompras += compra;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public double getTotalCompras() {
+        return totalCompras;
     }
 }
 
