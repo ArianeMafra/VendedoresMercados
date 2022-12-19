@@ -1,3 +1,5 @@
+package desafio01;
+
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -73,8 +75,8 @@ public class Main {
         }
     }
 
-    public static void rankingVendedores(Mercado mercado1,Mercado mercado2,Mercado mercado3){
-        Vendedor []maior= new Vendedor[3];
+    public static void rankingVendedores(Mercado mercado1, Mercado mercado2, Mercado mercado3){
+        Vendedor[]maior= new Vendedor[3];
         maior[0]=mercado1.vendedores[0];
         maior[0].pagamento(0);
         maior[1]=maior[0];
@@ -167,116 +169,6 @@ public class Main {
                         mercado.vendedores[i].getValorBonificacao());
             }
         }
-    }
-}
-
-class Regulador {
-    public void aplicarBonificacao(Mercado mercado) {
-        for (int i = 0; i < mercado.vendedores.length; i++) {
-            if (mercado.vendedores[i].getValorVendas() > mercado.getMeta()) {
-                mercado.vendedores[i].setValorBonificacao();
-            }
-        }
-    }
-
-}
-
-class Mercado {
-
-    private String nome;
-    Vendedor[] vendedores;
-    private String local;
-    private double meta;
-    public double totalVendas;
-
-    public Mercado(String nome, Vendedor[] vendedores, String local, double meta) {
-        this.nome = nome;
-        this.vendedores = vendedores;
-        this.local = local;
-        this.meta = meta;
-    }
-
-    public String getNome() {
-
-        return nome;
-    }
-
-    public Vendedor[] getVendedores() {
-
-        return vendedores;
-    }
-
-    public String getLocal() {
-
-        return local;
-    }
-
-    public double getTotalVendas() {
-        for (int i = 0; i < vendedores.length; i++) {
-            totalVendas += vendedores[i].getValorVendas();
-        }
-
-        return totalVendas;
-    }
-
-    public double getMeta() {
-
-        return meta;
-    }
-
-}
-class Vendedor {
-    private String nome;
-    private double valorVendas;
-    private double valorBonificacao;
-
-    public Vendedor(String nome) {
-        this.nome = nome;
-    }
-
-    public void pagamento(double valor) {
-        this.valorVendas += valor;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public double getValorVendas() {
-        return valorVendas;
-    }
-
-    public double getValorBonificacao() {
-        return valorBonificacao;
-    }
-
-    public void setValorBonificacao() {
-        valorBonificacao = valorVendas * 0.1;
-    }
-}
-
-class Comprador {
-
-    private String nome;
-    private double compra;
-    private double totalCompras;
-
-    public Comprador(String nome) {
-        this.nome = nome;
-    }
-
-    public void comprar(Vendedor valor) {
-        compra = Main.random.nextInt(100,1000);
-        valor.pagamento(compra);
-        totalCompras += compra;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public double getTotalCompras() {
-        return totalCompras;
     }
 }
 
